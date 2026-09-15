@@ -1,0 +1,22 @@
+[project]
+name = "core-gateway"
+version = "0.1.0"
+description = "Entrada unica. Conhece Flag, RequestContext e o router — nenhum dominio."
+requires-python = ">=3.12"
+dependencies = [
+    "shared-contracts",
+    "domain-security",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/core_gateway"]
+
+[tool.uv.sources]
+shared-contracts = { workspace = true }
+domain-security = { workspace = true }

@@ -17,9 +17,8 @@ from shared_contracts import ContractError, Flag, UnknownFlagError
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from shared_contracts import HandlerSpec, RequestContext
-
     from domain_security.router.registry import Registry
+    from shared_contracts import HandlerSpec, RequestContext
 
 
 class Router:
@@ -55,8 +54,24 @@ class Router:
             raise TypeError(f"Handler de {flag} nao implementa `handle`.")
 
         if inspect.iscoroutinefunction(handle):
-            return await handle(payload, context)
-        return await anyio.to_thread.run_sync(handle, payload, context)
+            result = await handle(payload, context)
+        else:
+            result = await anyio.to_thread.run_sync(handle, payload, context)
+        return _as_dto(flag, result)
+
+
+def _as_dto(flag: Flag, result: object) -> BaseModel:
+    """Garante que o handler devolveu DTO, e nao `dict` (principio 5).
+
+    Sem esta checagem, um handler que devolvesse o documento cru do repository
+    seria serializado sem reclamacao e o formato de armazenamento vazaria para o
+    frontend — exatamente o acoplamento que o principio 5 existe para impedir.
+    """
+    if not isinstance(result, BaseModel):
+        raise TypeError(
+            f"Handler de {flag} devolveu {type(result).__name__}; era esperado um DTO Pydantic."
+        )
+    return result
 
 
 def _validate(spec: HandlerSpec, raw_payload: Mapping[str, object]) -> BaseModel:

@@ -63,7 +63,9 @@ def test_token_expirado_e_recusado() -> None:
 
 
 def test_token_assinado_com_outro_segredo_e_recusado(issuer: JwtTokenIssuer) -> None:
-    outro = JwtTokenIssuer(secret="um-segredo-bem-diferente-com-tamanho-suficiente", ttl=timedelta(hours=1))
+    outro = JwtTokenIssuer(
+        secret="um-segredo-bem-diferente-com-tamanho-suficiente", ttl=timedelta(hours=1)
+    )
     with pytest.raises(UnauthorizedError):
         issuer.verify(outro.issue("u1", frozenset()))
 
@@ -106,9 +108,7 @@ def test_permissoes_vem_da_fonte_de_verdade_nao_do_token(
 ) -> None:
     """USER.PERMISSIONS e a fonte de verdade. Token velho nao carrega acesso revogado."""
     token = issuer.issue("u1", frozenset({"acesso:revogado"}))
-    context = security.resolve(
-        flag="DRAW.SHARE", authorization=f"Bearer {token}", request_id="r1"
-    )
+    context = security.resolve(flag="DRAW.SHARE", authorization=f"Bearer {token}", request_id="r1")
     assert context.identity is not None
     assert context.identity.permissions == frozenset({"draw:share", "journal:write"})
     assert not context.identity.can("acesso:revogado")
@@ -152,9 +152,7 @@ def test_flag_com_permissao_exigida_passa_quando_o_usuario_a_tem(
 ) -> None:
     token = issuer.issue("u1", frozenset())
     security.require_permission_for("DRAW.SHARE", "draw:share")
-    context = security.resolve(
-        flag="DRAW.SHARE", authorization=f"Bearer {token}", request_id="r1"
-    )
+    context = security.resolve(flag="DRAW.SHARE", authorization=f"Bearer {token}", request_id="r1")
     assert context.identity is not None
 
 

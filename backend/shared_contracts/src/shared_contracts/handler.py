@@ -59,9 +59,7 @@ class HandlerSpec:
     factory: HandlerFactory
 
 
-def domain_flag(
-    *, domain: str, subdomain: str, payload: type[BaseModel]
-) -> Callable[[type], type]:
+def domain_flag(*, domain: str, subdomain: str, payload: type[BaseModel]) -> Callable[[type], type]:
     """Anuncia a flag atendida por um handler e o DTO que ele aceita."""
 
     def decorate(cls: type) -> type:

@@ -29,9 +29,7 @@ class JwtTokenIssuer:
         # de pelo menos o tamanho do digest — recusar no construtor e o que impede
         # o sistema de subir com um segredo fraco em vez de so avisar em log.
         if len(secret.encode("utf-8")) < MIN_SECRET_BYTES:
-            raise ValueError(
-                f"Segredo de assinatura precisa de ao menos {MIN_SECRET_BYTES} bytes."
-            )
+            raise ValueError(f"Segredo de assinatura precisa de ao menos {MIN_SECRET_BYTES} bytes.")
         self._secret = secret
         self._ttl = ttl
 

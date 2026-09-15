@@ -9,11 +9,13 @@ from __future__ import annotations
 import json
 import os
 import time
-from pathlib import Path
-from typing import TypeAlias
+from typing import TYPE_CHECKING, TypeAlias
 from uuid import uuid4
 
-JsonValue: TypeAlias = "str | int | float | bool | None | list[JsonValue] | dict[str, JsonValue]"
+if TYPE_CHECKING:
+    from pathlib import Path
+
+JsonValue: TypeAlias = "str | int | float | bool | list[JsonValue] | dict[str, JsonValue] | None"
 JsonDocument: TypeAlias = "dict[str, JsonValue]"
 
 _REPLACE_ATTEMPTS = 6

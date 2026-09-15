@@ -14,8 +14,11 @@ A versao otimista do agregado continua valendo nos dois cenarios.
 from __future__ import annotations
 
 import threading
-from collections.abc import Iterator
 from contextlib import contextmanager
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class PathLocks:

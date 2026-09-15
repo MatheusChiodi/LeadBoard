@@ -6,13 +6,14 @@ le o que foi anunciado — e assim `domain_security` nunca faz `import domain_us
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator
 from importlib.metadata import entry_points
 from typing import TYPE_CHECKING
 
 from shared_contracts import DuplicateFlagError, Flag, HandlerSpec
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
+
     from shared_contracts import AppContext
 
 ENTRY_POINT_GROUP = "leadboard.handlers"

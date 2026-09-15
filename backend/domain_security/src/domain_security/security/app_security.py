@@ -82,9 +82,7 @@ class AppSecurity:
         if required is not None and not identity.can(required):
             raise ForbiddenError(f"Identidade {user_id} nao tem permissao para {normalized}.")
 
-        return RequestContext(
-            request_id=request_id, received_at=received_at, identity=identity
-        )
+        return RequestContext(request_id=request_id, received_at=received_at, identity=identity)
 
     # ------------------------------------------------------------------- interno
 

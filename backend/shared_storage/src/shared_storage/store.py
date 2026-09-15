@@ -7,12 +7,15 @@ repository, que fica um nivel acima e informa quais campos vao para o indice.
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable, Iterator, Mapping, Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from shared_storage.atomic import JsonDocument, JsonValue, read_json, write_atomic
 from shared_storage.errors import DocumentNotFoundError, VersionConflictError
 from shared_storage.locks import PathLocks
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator, Mapping, Sequence
 
 INDEX_FILENAME = "_index.json"
 INDEX_SCHEMA_VERSION = 1

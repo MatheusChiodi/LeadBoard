@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from shared_storage.errors import DocumentNotFoundError, VersionConflictError
 from shared_storage import JsonStore
+from shared_storage.errors import DocumentNotFoundError, VersionConflictError
 
 COLLECTION = "journal/entry"
 
@@ -40,9 +40,7 @@ def test_gravacao_seguinte_incrementa_a_versao(store: JsonStore) -> None:
 def test_versao_divergente_levanta_conflito(store: JsonStore) -> None:
     store.write(COLLECTION, "01H8X", {"title": "a"}, partition="2026-09")
     with pytest.raises(VersionConflictError):
-        store.write(
-            COLLECTION, "01H8X", {"title": "b"}, partition="2026-09", expected_version=99
-        )
+        store.write(COLLECTION, "01H8X", {"title": "b"}, partition="2026-09", expected_version=99)
 
 
 def test_criar_por_cima_de_documento_existente_e_conflito(store: JsonStore) -> None:
@@ -53,9 +51,7 @@ def test_criar_por_cima_de_documento_existente_e_conflito(store: JsonStore) -> N
 
 def test_atualizar_documento_inexistente_e_not_found(store: JsonStore) -> None:
     with pytest.raises(DocumentNotFoundError):
-        store.write(
-            COLLECTION, "fantasma", {"title": "a"}, partition="2026-09", expected_version=1
-        )
+        store.write(COLLECTION, "fantasma", {"title": "a"}, partition="2026-09", expected_version=1)
 
 
 def test_nao_deixa_arquivo_temporario_para_tras(store: JsonStore, tmp_path: Path) -> None:
@@ -66,9 +62,7 @@ def test_nao_deixa_arquivo_temporario_para_tras(store: JsonStore, tmp_path: Path
 def test_arquivo_gravado_e_determinista(store: JsonStore, tmp_path: Path) -> None:
     store.write(COLLECTION, "01H8X", {"z": 1, "a": 2}, partition="2026-09")
     primeiro = (tmp_path / COLLECTION / "2026-09" / "01H8X.json").read_bytes()
-    store.write(
-        COLLECTION, "01H8Y", {"a": 2, "z": 1}, partition="2026-09"
-    )
+    store.write(COLLECTION, "01H8Y", {"a": 2, "z": 1}, partition="2026-09")
     segundo = (tmp_path / COLLECTION / "2026-09" / "01H8Y.json").read_bytes()
     assert primeiro.replace(b"01H8X", b"") == segundo.replace(b"01H8Y", b"")
 
@@ -166,7 +160,7 @@ def test_escrita_concorrente_no_mesmo_documento_nao_corrompe(store: JsonStore) -
                 )
             except VersionConflictError:
                 pass
-            except BaseException as exc:  # noqa: BLE001
+            except BaseException as exc:
                 erros.append(exc)
 
     threads = [threading.Thread(target=incrementa) for _ in range(8)]

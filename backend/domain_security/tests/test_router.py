@@ -9,7 +9,6 @@ from shared_contracts import (
     ContractError,
     DuplicateFlagError,
     Flag,
-    HandlerSpec,
     Identity,
     RequestContext,
     UnknownFlagError,
@@ -109,9 +108,7 @@ async def test_payload_com_campo_desconhecido_vira_erro_de_contrato(
     router: Router, context: RequestContext
 ) -> None:
     with pytest.raises(ContractError):
-        await router.dispatch(
-            Flag("DEMO", "SINCRONO"), {"mensagem": "oi", "intruso": 1}, context
-        )
+        await router.dispatch(Flag("DEMO", "SINCRONO"), {"mensagem": "oi", "intruso": 1}, context)
 
 
 async def test_payload_sem_campo_obrigatorio_vira_erro_de_contrato(

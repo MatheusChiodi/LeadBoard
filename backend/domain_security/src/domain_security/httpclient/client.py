@@ -9,13 +9,13 @@ vazada amanha.
 from __future__ import annotations
 
 import asyncio
-from types import TracebackType
 from typing import TYPE_CHECKING
 
 import httpx
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
+    from types import TracebackType
 
 DEFAULT_TIMEOUT_SECONDS = 5.0
 DEFAULT_ATTEMPTS = 3

@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pathlib import Path
 
     from shared_contracts.events import DomainEvent
@@ -17,9 +18,18 @@ if TYPE_CHECKING:
 
 @runtime_checkable
 class EventBus(Protocol):
-    """Publicacao de evento. O publicador nunca sabe quem assina."""
+    """Publicacao e assinatura de evento. O publicador nunca sabe quem assina.
+
+    E o caminho pelo qual `domain_journal` sabe que uma tarefa foi concluida sem
+    consultar `domain_focus` — consulta seria import, e import seria o principio 3
+    quebrado. O evento e o contrato entre eles.
+    """
 
     def publish(self, event: DomainEvent) -> None: ...
+
+    def subscribe(
+        self, event_type: type[DomainEvent], handler: Callable[[DomainEvent], None]
+    ) -> None: ...
 
 
 @runtime_checkable

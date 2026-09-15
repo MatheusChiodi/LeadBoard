@@ -48,10 +48,26 @@ src = [
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "SIM", "TCH", "RUF", "ANN", "S"]
-ignore = ["ANN401"]
+# UP040: `type X = ...` (PEP 695) ainda tem suporte irregular no mypy para
+# alias recursivo, que e exatamente o caso de JsonValue.
+ignore = ["UP040"]
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["S101", "ANN"]
+# S101: assert e a ferramenta do pytest. S105/S106: segredo literal em teste e o
+# ponto — ele nao pode vir de ambiente ou o teste deixa de ser deterministico.
+"**/tests/**" = ["S101", "S105", "S106", "ANN"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+# Cumpre a Definition of Done da secao 8 no lugar certo: proibe `Any` no nosso
+# codigo sem reclamar do `Any` que Pydantic e FastAPI usam internamente.
+"typing.Any".msg = "Sem Any explicito (secao 8). Use `object`, um TypeVar ou um Protocol."
+
+[tool.ruff.lint.flake8-type-checking]
+# Pydantic resolve anotacao em runtime. Mover `datetime` ou `date` para um bloco
+# TYPE_CHECKING quebraria a validacao do modelo com NameError na primeira request
+# — um erro que nenhum type checker acusa porque, para ele, o import existe.
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "pydantic.RootModel"]
+runtime-evaluated-decorators = ["dataclasses.dataclass"]
 
 [tool.ruff.lint.isort]
 known-first-party = [
@@ -67,8 +83,12 @@ known-first-party = [
 python_version = "3.12"
 strict = true
 warn_unreachable = true
-disallow_any_explicit = true
 show_error_codes = true
+# `disallow_any_explicit` fica DESLIGADO de proposito. Com Pydantic v2 ele acusa
+# o `Any` das stubs de BaseModel e ConfigDict, nao o do nosso codigo — 19 falsos
+# positivos que ensinariam a ignorar a saida do mypy. A regra da secao 8 ("sem
+# Any explicito") e cumprida pelo ruff, que bane `typing.Any` no nosso fonte e
+# nao ve o que a biblioteca faz por dentro.
 mypy_path = [
     "core_gateway/src",
     "domain_security/src",
@@ -91,4 +111,8 @@ testpaths = [
     "shared_contracts",
     "shared_storage",
 ]
-addopts = "-q --strict-markers"
+# --import-mode=importlib: sem ele, os `tests/` dos cinco membros virariam o
+# mesmo pacote `tests` e a suite completa quebraria por colisao de nome —
+# passando quando rodada um pacote por vez, que e a pior forma de falhar.
+addopts = "-q --strict-markers --import-mode=importlib"
+consider_namespace_packages = true
