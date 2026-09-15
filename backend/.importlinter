@@ -1,0 +1,64 @@
+# Substitui o enforcer do Maven. Roda no CI como etapa que falha o build.
+# Ao criar um dominio novo: adicione o pacote em root_packages, no contrato
+# "Dominio nunca importa dominio" e em "Infra nao conhece negocio".
+# Ao criar um micro-dominio novo: adicione em "Camadas do micro-dominio".
+
+[importlinter]
+root_packages =
+    core_gateway
+    domain_security
+    domain_journal
+    shared_storage
+    shared_contracts
+include_external_packages = True
+
+[importlinter:contract:dominio-independente]
+name = Dominio nunca importa dominio
+type = independence
+modules =
+    domain_journal
+
+[importlinter:contract:security-sem-negocio]
+name = Security nao conhece negocio
+type = forbidden
+source_modules =
+    domain_security
+forbidden_modules =
+    domain_journal
+
+[importlinter:contract:camadas-micro-dominio]
+name = Camadas do micro-dominio (handler -> service -> repository)
+type = layers
+layers =
+    handler
+    service
+    repository
+containers =
+    domain_journal.entry
+
+[importlinter:contract:infra-sem-negocio]
+name = Infra nao conhece negocio
+type = forbidden
+source_modules =
+    shared_storage
+    shared_contracts
+forbidden_modules =
+    core_gateway
+    domain_security
+    domain_journal
+
+[importlinter:contract:contratos-nao-importam-storage]
+name = shared_contracts nao conhece shared_storage
+type = forbidden
+source_modules =
+    shared_contracts
+forbidden_modules =
+    shared_storage
+
+[importlinter:contract:gateway-sem-negocio]
+name = Gateway nao conhece dominio de negocio
+type = forbidden
+source_modules =
+    core_gateway
+forbidden_modules =
+    domain_journal

@@ -1,0 +1,94 @@
+[project]
+name = "leadboard-backend"
+version = "0.1.0"
+description = "LeadBoard — workspace raiz. Amarra os membros, nao contem codigo."
+requires-python = ">=3.12"
+dependencies = [
+    "core-gateway",
+    "domain-security",
+    "domain-journal",
+    "shared-contracts",
+    "shared-storage",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["core_gateway", "domain_*", "shared_*"]
+
+[tool.uv.sources]
+core-gateway = { workspace = true }
+domain-security = { workspace = true }
+domain-journal = { workspace = true }
+shared-contracts = { workspace = true }
+shared-storage = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "mypy>=1.13",
+    "ruff>=0.8",
+    "import-linter>=2.1",
+    "httpx>=0.28",
+]
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = [
+    "core_gateway/src",
+    "domain_security/src",
+    "domain_journal/src",
+    "shared_contracts/src",
+    "shared_storage/src",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "SIM", "TCH", "RUF", "ANN", "S"]
+ignore = ["ANN401"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "ANN"]
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "core_gateway",
+    "domain_security",
+    "domain_journal",
+    "shared_contracts",
+    "shared_storage",
+]
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+disallow_any_explicit = true
+show_error_codes = true
+mypy_path = [
+    "core_gateway/src",
+    "domain_security/src",
+    "domain_journal/src",
+    "shared_contracts/src",
+    "shared_storage/src",
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_any_explicit = false
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = [
+    "core_gateway",
+    "domain_security",
+    "domain_journal",
+    "shared_contracts",
+    "shared_storage",
+]
+addopts = "-q --strict-markers"

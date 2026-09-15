@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+storybook-static/
+*.local
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Sistema
+Thumbs.db
+.DS_Store
+
+# Armazenamento: os dados versionam (git e o backup e o historico deste sistema),
+# mas o lixo de escrita atomica e os temporarios nunca entram.
+data/**/*.tmp
