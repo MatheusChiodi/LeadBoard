@@ -53,38 +53,43 @@ export const CATEGORY_LABEL: Record<ToolCategory, string> = {
   rede: 'Rede',
 }
 
-/** Placeholder até a tela existir; trocado por `import('./ui/<Nome>')`. */
-const pendente = () => Promise.resolve({ default: (() => null) as ComponentType })
+/**
+ * Placeholder das telas que ainda não foram portadas.
+ *
+ * Explícito de propósito: a ferramenta aparece no catálogo e a tela avisa que
+ * ela ainda não existe, em vez de sumir da lista ou abrir uma página em branco.
+ */
+const pendente = () => import('./ui/EmBreve')
 
 export const TOOLS: ToolDefinition[] = [
   // ---------------------------------------------------------------- documentos
-  { id: 'gerador-cpf', name: 'Gerador de CPF', category: 'documentos', description: 'Gera CPFs válidos para testes.', keywords: ['cpf', 'documento', 'validar'], load: pendente },
-  { id: 'gerador-cnpj', name: 'Gerador de CNPJ', category: 'documentos', description: 'Gera CNPJs válidos para testes.', keywords: ['cnpj', 'empresa', 'documento'], load: pendente },
+  { id: 'gerador-cpf', name: 'Gerador de CPF', category: 'documentos', description: 'Gera CPFs válidos para testes.', keywords: ['cpf', 'documento', 'validar'], load: () => import('./ui/GeradorCpf') },
+  { id: 'gerador-cnpj', name: 'Gerador de CNPJ', category: 'documentos', description: 'Gera CNPJs válidos para testes.', keywords: ['cnpj', 'empresa', 'documento'], load: () => import('./ui/GeradorCnpj') },
   { id: 'busca-cep', name: 'Busca de CEP', category: 'documentos', description: 'Consulta endereço a partir do CEP.', keywords: ['cep', 'endereço', 'correios', 'viacep'], needsNetwork: true, load: pendente },
   { id: 'gerador-cartao', name: 'Gerador de Cartão de Crédito', category: 'documentos', description: 'Gera número de cartão que passa no Luhn, para teste.', keywords: ['cartão', 'credito', 'luhn', 'teste'], load: pendente },
 
   // ------------------------------------------------------------------ devtools
-  { id: 'gerador-uuid', name: 'Gerador de UUID', category: 'devtools', description: 'Gera identificadores únicos versão 4.', keywords: ['uuid', 'guid', 'id', 'identificador'], load: pendente },
+  { id: 'gerador-uuid', name: 'Gerador de UUID', category: 'devtools', description: 'Gera identificadores únicos versão 4.', keywords: ['uuid', 'guid', 'id', 'identificador'], load: () => import('./ui/GeradorUuid') },
   { id: 'gerador-qrcode', name: 'Gerador de QR Code', category: 'devtools', description: 'Transforma texto ou link em QR Code.', keywords: ['qr', 'qrcode', 'código'], load: pendente },
-  { id: 'formatador-json', name: 'Formatador de JSON', category: 'devtools', description: 'Valida, indenta e ordena JSON.', keywords: ['json', 'formatar', 'indentar', 'beautify'], load: pendente },
+  { id: 'formatador-json', name: 'Formatador de JSON', category: 'devtools', description: 'Valida, indenta e ordena JSON.', keywords: ['json', 'formatar', 'indentar', 'beautify'], load: () => import('./ui/FormatadorJson') },
   { id: 'gerador-cron', name: 'Gerador de Cron', category: 'devtools', description: 'Monta e explica expressões cron em português.', keywords: ['cron', 'agendamento', 'crontab'], load: pendente },
   { id: 'regex-tester', name: 'Testador de Regex', category: 'devtools', description: 'Testa expressões regulares e mostra grupos capturados.', keywords: ['regex', 'regexp', 'expressão regular'], load: pendente },
   { id: 'comparador-json', name: 'Comparador de JSON', category: 'devtools', description: 'Mostra as diferenças entre dois JSON.', keywords: ['json', 'diff', 'comparar'], load: pendente },
-  { id: 'minificador-css', name: 'Minificador de CSS', category: 'devtools', description: 'Remove espaços e comentários de CSS.', keywords: ['css', 'minificar', 'comprimir'], load: pendente },
-  { id: 'minificador-js', name: 'Minificador de JS', category: 'devtools', description: 'Remove espaços e comentários de JavaScript.', keywords: ['js', 'javascript', 'minificar'], load: pendente },
-  { id: 'minificador-html', name: 'Minificador de HTML', category: 'devtools', description: 'Remove espaços e comentários de HTML.', keywords: ['html', 'minificar'], load: pendente },
+  { id: 'minificador-css', name: 'Minificador de CSS', category: 'devtools', description: 'Remove espaços e comentários de CSS.', keywords: ['css', 'minificar', 'comprimir'], load: () => import('./ui/MinificadorCss') },
+  { id: 'minificador-js', name: 'Minificador de JS', category: 'devtools', description: 'Remove espaços e comentários de JavaScript.', keywords: ['js', 'javascript', 'minificar'], load: () => import('./ui/MinificadorJs') },
+  { id: 'minificador-html', name: 'Minificador de HTML', category: 'devtools', description: 'Remove espaços e comentários de HTML.', keywords: ['html', 'minificar'], load: () => import('./ui/MinificadorHtml') },
   { id: 'editor-markdown', name: 'Editor de Markdown', category: 'devtools', description: 'Edita Markdown com pré-visualização.', keywords: ['markdown', 'md', 'editor', 'preview'], load: pendente },
-  { id: 'visualizador-json', name: 'Visualizador de JSON', category: 'devtools', description: 'Navega por um JSON em árvore.', keywords: ['json', 'visualizar', 'árvore'], load: pendente },
+  { id: 'visualizador-json', name: 'Visualizador de JSON', category: 'devtools', description: 'Navega por um JSON em árvore.', keywords: ['json', 'visualizar', 'árvore'], load: () => import('./ui/VisualizadorJson') },
   { id: 'visualizador-csv', name: 'Visualizador de CSV', category: 'devtools', description: 'Mostra CSV como tabela.', keywords: ['csv', 'tabela', 'planilha'], load: pendente },
 
   // --------------------------------------------------------------- conversores
-  { id: 'base64-encode', name: 'Base64 Encode', category: 'conversores', description: 'Codifica texto em Base64.', keywords: ['base64', 'codificar', 'encode'], load: pendente },
-  { id: 'base64-decode', name: 'Base64 Decode', category: 'conversores', description: 'Decodifica Base64 para texto.', keywords: ['base64', 'decodificar', 'decode'], load: pendente },
-  { id: 'json-yaml', name: 'Conversor JSON ↔ YAML', category: 'conversores', description: 'Converte entre JSON e YAML.', keywords: ['json', 'yaml', 'yml', 'converter'], load: pendente },
+  { id: 'base64-encode', name: 'Base64 Encode', category: 'conversores', description: 'Codifica texto em Base64.', keywords: ['base64', 'codificar', 'encode'], load: () => import('./ui/Base64Encode') },
+  { id: 'base64-decode', name: 'Base64 Decode', category: 'conversores', description: 'Decodifica Base64 para texto.', keywords: ['base64', 'decodificar', 'decode'], load: () => import('./ui/Base64Decode') },
+  { id: 'json-yaml', name: 'Conversor JSON ↔ YAML', category: 'conversores', description: 'Converte entre JSON e YAML.', keywords: ['json', 'yaml', 'yml', 'converter'], load: () => import('./ui/JsonYaml') },
   { id: 'csv-json', name: 'Conversor CSV ↔ JSON', category: 'conversores', description: 'Converte entre CSV e JSON.', keywords: ['csv', 'json', 'planilha'], load: pendente },
-  { id: 'xml-json', name: 'Conversor XML ↔ JSON', category: 'conversores', description: 'Converte entre XML e JSON.', keywords: ['xml', 'json', 'converter'], load: pendente },
-  { id: 'url-encode', name: 'URL Encode/Decode', category: 'conversores', description: 'Codifica e decodifica componentes de URL.', keywords: ['url', 'percent', 'encode', 'uri'], load: pendente },
-  { id: 'html-entities', name: 'HTML Entities', category: 'conversores', description: 'Codifica e decodifica entidades HTML.', keywords: ['html', 'entities', 'escape'], load: pendente },
+  { id: 'xml-json', name: 'Conversor XML ↔ JSON', category: 'conversores', description: 'Converte entre XML e JSON.', keywords: ['xml', 'json', 'converter'], load: () => import('./ui/XmlJson') },
+  { id: 'url-encode', name: 'URL Encode/Decode', category: 'conversores', description: 'Codifica e decodifica componentes de URL.', keywords: ['url', 'percent', 'encode', 'uri'], load: () => import('./ui/UrlEncode') },
+  { id: 'html-entities', name: 'HTML Entities', category: 'conversores', description: 'Codifica e decodifica entidades HTML.', keywords: ['html', 'entities', 'escape'], load: () => import('./ui/HtmlEntities') },
   { id: 'timestamp', name: 'Conversor de Timestamp', category: 'conversores', description: 'Converte entre epoch e data legível.', keywords: ['timestamp', 'unix', 'epoch', 'data'], load: pendente },
   { id: 'hex-rgb', name: 'Conversor HEX → RGB', category: 'conversores', description: 'Converte cor hexadecimal para RGB.', keywords: ['hex', 'rgb', 'cor'], load: pendente },
   { id: 'rgb-hex', name: 'Conversor RGB → HEX', category: 'conversores', description: 'Converte cor RGB para hexadecimal.', keywords: ['rgb', 'hex', 'cor'], load: pendente },
@@ -97,15 +102,15 @@ export const TOOLS: ToolDefinition[] = [
   { id: 'buscador-emoji', name: 'Buscador de Emoji', category: 'design', description: 'Busca e copia emoji por nome.', keywords: ['emoji', 'emoticon', 'símbolo'], load: pendente },
 
   // ----------------------------------------------------------------- segurança
-  { id: 'hash-md5', name: 'Hash MD5', category: 'seguranca', description: 'Calcula o hash MD5 de um texto.', keywords: ['md5', 'hash', 'checksum'], load: pendente },
-  { id: 'hash-sha256', name: 'Hash SHA-256', category: 'seguranca', description: 'Calcula o hash SHA-256 de um texto.', keywords: ['sha', 'sha256', 'hash'], load: pendente },
-  { id: 'jwt-decoder', name: 'Decodificador de JWT', category: 'seguranca', description: 'Lê o conteúdo de um token JWT sem verificar a assinatura.', keywords: ['jwt', 'token', 'decodificar'], load: pendente },
-  { id: 'gerador-senha', name: 'Gerador de Senhas', category: 'seguranca', description: 'Gera senha forte com os conjuntos escolhidos.', keywords: ['senha', 'password', 'aleatório'], load: pendente },
+  { id: 'hash-md5', name: 'Hash MD5', category: 'seguranca', description: 'Calcula o hash MD5 de um texto.', keywords: ['md5', 'hash', 'checksum'], load: () => import('./ui/HashMd5') },
+  { id: 'hash-sha256', name: 'Hash SHA-256', category: 'seguranca', description: 'Calcula o hash SHA-256 de um texto.', keywords: ['sha', 'sha256', 'hash'], load: () => import('./ui/HashSha256') },
+  { id: 'jwt-decoder', name: 'Decodificador de JWT', category: 'seguranca', description: 'Lê o conteúdo de um token JWT sem verificar a assinatura.', keywords: ['jwt', 'token', 'decodificar'], load: () => import('./ui/JwtDecoder') },
+  { id: 'gerador-senha', name: 'Gerador de Senhas', category: 'seguranca', description: 'Gera senha forte com os conjuntos escolhidos.', keywords: ['senha', 'password', 'aleatório'], load: () => import('./ui/GeradorSenha') },
 
   // --------------------------------------------------------------------- texto
-  { id: 'gerador-slug', name: 'Gerador de Slug', category: 'texto', description: 'Transforma um título em slug de URL.', keywords: ['slug', 'url', 'permalink'], load: pendente },
+  { id: 'gerador-slug', name: 'Gerador de Slug', category: 'texto', description: 'Transforma um título em slug de URL.', keywords: ['slug', 'url', 'permalink'], load: () => import('./ui/GeradorSlug') },
   { id: 'gerador-lorem', name: 'Gerador de Lorem Ipsum', category: 'texto', description: 'Gera texto de preenchimento.', keywords: ['lorem', 'ipsum', 'placeholder'], load: pendente },
-  { id: 'conversor-texto', name: 'Conversor de Texto', category: 'texto', description: 'Troca a caixa do texto entre dez estilos.', keywords: ['maiúscula', 'minúscula', 'camel', 'snake', 'kebab'], load: pendente },
+  { id: 'conversor-texto', name: 'Conversor de Texto', category: 'texto', description: 'Troca a caixa do texto entre dez estilos.', keywords: ['maiúscula', 'minúscula', 'camel', 'snake', 'kebab'], load: () => import('./ui/ConversorTexto') },
 
   // ----------------------------------------------------------------------- seo
   { id: 'meta-tags', name: 'Gerador de Meta Tags', category: 'seo', description: 'Monta meta tags com Open Graph e Twitter Card.', keywords: ['meta', 'seo', 'og', 'twitter'], load: pendente },
@@ -115,7 +120,7 @@ export const TOOLS: ToolDefinition[] = [
   // ---------------------------------------------------------------------- rede
   { id: 'dns-lookup', name: 'Consulta de DNS', category: 'rede', description: 'Consulta registros DNS de um domínio.', keywords: ['dns', 'domínio', 'mx', 'cname'], needsNetwork: true, load: pendente },
   { id: 'ip-locator', name: 'Localizador de IP', category: 'rede', description: 'Mostra a localização aproximada de um IP.', keywords: ['ip', 'geolocalização', 'localizar'], needsNetwork: true, load: pendente },
-  { id: 'gerador-mac', name: 'Gerador de MAC Address', category: 'rede', description: 'Gera endereços MAC para teste.', keywords: ['mac', 'endereço', 'rede'], load: pendente },
+  { id: 'gerador-mac', name: 'Gerador de MAC Address', category: 'rede', description: 'Gera endereços MAC para teste.', keywords: ['mac', 'endereço', 'rede'], load: () => import('./ui/GeradorMac') },
 ]
 
 /** Busca por nome, descrição e sinônimos, ignorando acento e caixa. */

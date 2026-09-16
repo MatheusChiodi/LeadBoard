@@ -1,12 +1,37 @@
+import { BrowserRouter, Link } from 'react-router-dom'
+
+import { AppRoutes } from './core/router/routes'
+
 /**
- * Casca temporária da aplicação até o shell (WindowManager + Dock)
- * ser implementado. Ver leadboard-arquitetura.md, seção 6.
+ * Casca da aplicação.
+ *
+ * Temporária: pela seção 6 o LeadBoard usa o shell de janelas do Focus como
+ * casca do produto inteiro, com Tools, Draw e Focus virando janelas dentro dele.
+ * Até o shell existir, uma navegação simples mantém o produto usável.
  */
 export function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface text-text">
-      <h1 className="text-lg font-medium">LeadBoard</h1>
-    </main>
+    <BrowserRouter>
+      <div className="flex min-h-screen flex-col bg-surface text-text">
+        <header className="border-b border-border">
+          <nav className="mx-auto flex w-full max-w-5xl items-center gap-6 px-4 py-3">
+            <Link to="/" className="text-sm font-bold text-text">
+              Lead<span className="text-accent">Board</span>
+            </Link>
+            <Link
+              to="/ferramentas"
+              className="text-sm text-text-muted transition hover:text-accent"
+            >
+              Ferramentas
+            </Link>
+          </nav>
+        </header>
+
+        <main className="flex-1">
+          <AppRoutes />
+        </main>
+      </div>
+    </BrowserRouter>
   )
 }
 
