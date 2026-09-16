@@ -43,10 +43,20 @@ class AppSecurity:
         issuer: TokenIssuer,
         permissions: PermissionSource,
         public_flags: Iterable[str] = (),
+        default_identity: Identity | None = None,
     ) -> None:
         self._issuer = issuer
         self._permissions = permissions
         self._public_flags = {flag.upper() for flag in public_flags}
+        # Modo usuario unico: enquanto `USER.LOGIN` nao existe, toda request sem
+        # credencial resolve para esta identidade em vez de morrer com 401.
+        #
+        # O desenho da secao 2 continua intacto — a request segue passando pelo
+        # App Security antes de qualquer regra, e permissao continua sendo
+        # decidida aqui. Muda a POLITICA de identificacao, nao o fluxo. No dia do
+        # login, apagar esta configuracao e a unica alteracao necessaria: nenhum
+        # dominio sabe que ela existiu.
+        self._default_identity = default_identity
         self._required: dict[str, str] = {}
         self._cache: dict[str, frozenset[str]] = {}
         self._cache_guard = threading.Lock()
@@ -71,12 +81,15 @@ class AppSecurity:
         if normalized in self._public_flags and authorization is None:
             return RequestContext(request_id=request_id, received_at=received_at)
 
-        user_id, _ = self._issuer.verify(_extract_token(authorization))
-        identity = Identity(
-            user_id=user_id,
-            email="",
-            permissions=self._permissions_of(user_id),
-        )
+        if authorization is None and self._default_identity is not None:
+            identity = self._default_identity
+        else:
+            user_id, _ = self._issuer.verify(_extract_token(authorization))
+            identity = Identity(
+                user_id=user_id,
+                email="",
+                permissions=self._permissions_of(user_id),
+            )
 
         required = self._required.get(normalized)
         if required is not None and not identity.can(required):

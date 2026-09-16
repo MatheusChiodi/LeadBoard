@@ -1,0 +1,7 @@
+* text=auto eol=lf
+
+# .bat exige CRLF: com LF o cmd.exe le o arquivo errado e come caracteres
+# ("echo." vira "cho."). Sem esta regra, um clone em maquina que normaliza para
+# LF quebra os atalhos de inicializacao sem erro que explique o motivo.
+*.bat text eol=crlf
+*.cmd text eol=crlf

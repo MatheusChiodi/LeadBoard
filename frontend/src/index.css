@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@import './design-system/tokens/tokens.css';
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+}

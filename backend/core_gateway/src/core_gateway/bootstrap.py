@@ -6,7 +6,9 @@ lida no meio do codigo e teste que depende de quem rodou.
 
 from __future__ import annotations
 
+import logging
 import os
+import secrets
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import timedelta
@@ -16,6 +18,7 @@ from typing import TYPE_CHECKING
 from core_gateway.app import create_app
 from core_gateway.bus import InProcessEventBus
 from domain_security import AppSecurity, HttpClient, JwtTokenIssuer, Registry, Router
+from shared_contracts import Identity
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -24,6 +27,9 @@ if TYPE_CHECKING:
 
 DEFAULT_DATA_ROOT = Path("data")
 DEFAULT_TOKEN_HOURS = 12
+DEFAULT_LOCAL_USER = "local"
+
+logger = logging.getLogger("leadboard.boot")
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,18 +39,31 @@ class Settings:
     token_ttl: timedelta
     http_timeout: float
     public_flags: frozenset[str] = field(default_factory=lambda: frozenset({"USER.LOGIN"}))
+    #: Identidade usada enquanto nao existe login. `None` liga a exigencia de token.
+    single_user_id: str | None = DEFAULT_LOCAL_USER
 
     @classmethod
     def from_env(cls) -> Settings:
+        single_user = os.environ.get("LEADBOARD_SINGLE_USER", DEFAULT_LOCAL_USER) or None
         secret = os.environ.get("LEADBOARD_JWT_SECRET", "")
-        if not secret:
-            # Segredo com default embutido e segredo publicado: quem clona o repo
-            # assina token valido. Recusar a subida e a unica opcao segura.
+
+        if not secret and single_user is None:
+            # Com login ligado, segredo com default embutido e segredo publicado:
+            # quem clona o repo assina token valido. Recusar a subida e a unica
+            # opcao segura.
             raise RuntimeError(
                 "LEADBOARD_JWT_SECRET nao definido. "
                 'Gere com: python -c "import secrets; print(secrets.token_urlsafe(48))"'
             )
+
+        if not secret:
+            # Em modo usuario unico nenhum token e emitido nem verificado. Um
+            # segredo efemero evita exigir configuracao para algo que nao e usado,
+            # e garante que qualquer token forjado morra no proximo restart.
+            secret = secrets.token_urlsafe(48)
+
         return cls(
+            single_user_id=single_user,
             data_root=Path(os.environ.get("LEADBOARD_DATA_ROOT", str(DEFAULT_DATA_ROOT))),
             jwt_secret=secret,
             token_ttl=timedelta(
@@ -82,6 +101,17 @@ def build_app(settings: Settings | None = None) -> FastAPI:
     resolved.data_root.mkdir(parents=True, exist_ok=True)
 
     issuer = JwtTokenIssuer(secret=resolved.jwt_secret, ttl=resolved.token_ttl)
+    identity = (
+        Identity(user_id=resolved.single_user_id, email="", permissions=frozenset())
+        if resolved.single_user_id is not None
+        else None
+    )
+    if identity is not None:
+        logger.warning(
+            "Modo usuario unico ligado: toda request sem credencial vale como %r. "
+            "Defina LEADBOARD_SINGLE_USER='' quando USER.LOGIN existir.",
+            identity.user_id,
+        )
     context = LeadBoardContext(
         data_root=resolved.data_root,
         events=InProcessEventBus(),
@@ -106,6 +136,7 @@ def build_app(settings: Settings | None = None) -> FastAPI:
             issuer=issuer,
             permissions=NoPermissions(),
             public_flags=resolved.public_flags,
+            default_identity=identity,
         ),
         lifespan=lifespan,
     )

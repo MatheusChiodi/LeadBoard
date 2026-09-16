@@ -7,6 +7,7 @@ so ele acusa, e acusa antes de virar uma flag que some em producao.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
@@ -55,11 +56,23 @@ def test_boot_monta_o_app_inteiro(settings: Settings) -> None:
     assert "/api/dispatch" in rotas
 
 
-def test_segredo_ausente_impede_a_subida(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_segredo_ausente_impede_a_subida_quando_ha_login(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Default embutido seria segredo publicado: quem clona o repo assina token."""
     monkeypatch.delenv("LEADBOARD_JWT_SECRET", raising=False)
+    monkeypatch.setenv("LEADBOARD_SINGLE_USER", "")
     with pytest.raises(RuntimeError, match="LEADBOARD_JWT_SECRET"):
         Settings.from_env()
+
+
+def test_modo_usuario_unico_dispensa_segredo(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Sem login nenhum token e emitido; exigir segredo seria atrito por nada."""
+    monkeypatch.delenv("LEADBOARD_JWT_SECRET", raising=False)
+    monkeypatch.delenv("LEADBOARD_SINGLE_USER", raising=False)
+    resolved = Settings.from_env()
+    assert resolved.single_user_id == "local"
+    assert len(resolved.jwt_secret) >= 32
 
 
 def test_settings_lidas_do_ambiente(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -96,3 +109,42 @@ async def test_request_real_de_ponta_a_ponta(settings: Settings) -> None:
 def test_permissoes_ausentes_falham_fechado(tmp_path: Path) -> None:
     """Enquanto USER.PERMISSIONS nao existe, identidade nao ganha acesso nenhum."""
     assert NoPermissions().permissions_for("u1") == frozenset()
+
+
+async def test_sem_login_a_request_passa_sem_credencial(settings: Settings) -> None:
+    """Enquanto USER.LOGIN nao existe, o produto inteiro precisa funcionar."""
+    app = build_app(settings)
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        resposta = await client.post(
+            "/api/dispatch",
+            headers={"X-Domain-Flag": "JOURNAL.ENTRY"},
+            json={"op": "create", "title": "sem login", "occurred_on": "2026-09-15"},
+        )
+    assert resposta.status_code == 200
+
+
+async def test_com_login_ligado_a_request_sem_credencial_morre(settings: Settings) -> None:
+    """A mesma request volta a dar 401 assim que o modo usuario unico sai.
+
+    Nenhum dominio muda: a alteracao e uma linha de configuracao do Security.
+    """
+    app = build_app(replace(settings, single_user_id=None))
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        resposta = await client.post(
+            "/api/dispatch",
+            headers={"X-Domain-Flag": "JOURNAL.ENTRY"},
+            json={"op": "list", "start": "2026-09-01", "end": "2026-09-30"},
+        )
+    assert resposta.status_code == 401
+
+
+async def test_entrada_criada_sem_login_pertence_ao_usuario_local(settings: Settings) -> None:
+    app = build_app(settings)
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        await client.post(
+            "/api/dispatch",
+            headers={"X-Domain-Flag": "JOURNAL.ENTRY"},
+            json={"op": "create", "title": "minha", "occurred_on": "2026-09-15"},
+        )
+    gravado = next((settings.data_root / "journal" / "entry" / "2026-09").glob("*.json"))
+    assert '"author_id": "local"' in gravado.read_text(encoding="utf-8")

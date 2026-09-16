@@ -1,0 +1,64 @@
+/**
+ * Tokens do design system LeadBoard.
+ * Fonte única de verdade visual: nenhum componente define cor,
+ * sombra, raio ou espaçamento literal fora daqui.
+ */
+:root {
+  --color-accent: #ff5555;
+  --color-accent-hover: #ff7373;
+  --color-surface: #101014;
+  --color-surface-raised: #17171d;
+  --color-text: #f5f5f5;
+  --color-text-muted: #a1a1aa;
+  --color-border: #27272e;
+  --color-danger: #dc2626;
+  --color-danger-hover: #ef4444;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+
+  --font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+}
+
+/* "inline" porque os valores abaixo apontam para variáveis de :root,
+   não para literais — ver https://tailwindcss.com/docs/theme#using-a-custom-theme */
+@theme inline {
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-surface: var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-danger: var(--color-danger);
+  --color-danger-hover: var(--color-danger-hover);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+
+  --font-family-sans: var(--font-family-base);
+}
