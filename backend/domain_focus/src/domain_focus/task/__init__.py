@@ -1,0 +1,1 @@
+"""Micro-dominio `task`."""

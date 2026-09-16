@@ -1,0 +1,20 @@
+[project]
+name = "domain-focus"
+version = "0.1.0"
+description = "Dominio Focus: execucao, conhecimento, tempo e ambiente de trabalho."
+requires-python = ">=3.12"
+dependencies = ["shared-contracts", "shared-storage"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/domain_focus"]
+
+[project.entry-points."leadboard.handlers"]
+focus = "domain_focus.registry:handlers"
+
+[tool.uv.sources]
+shared-contracts = { workspace = true }
+shared-storage = { workspace = true }

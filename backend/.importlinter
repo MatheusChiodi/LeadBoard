@@ -8,6 +8,9 @@ root_packages =
     core_gateway
     domain_security
     domain_journal
+    domain_focus
+    domain_draw
+    domain_tools
     shared_storage
     shared_contracts
 include_external_packages = True
@@ -17,6 +20,9 @@ name = Dominio nunca importa dominio
 type = independence
 modules =
     domain_journal
+    domain_focus
+    domain_draw
+    domain_tools
 
 [importlinter:contract:security-sem-negocio]
 name = Security nao conhece negocio
@@ -25,6 +31,9 @@ source_modules =
     domain_security
 forbidden_modules =
     domain_journal
+    domain_focus
+    domain_draw
+    domain_tools
 
 [importlinter:contract:camadas-micro-dominio]
 name = Camadas do micro-dominio (handler -> service -> repository)
@@ -46,6 +55,9 @@ forbidden_modules =
     core_gateway
     domain_security
     domain_journal
+    domain_focus
+    domain_draw
+    domain_tools
 
 [importlinter:contract:contratos-nao-importam-storage]
 name = shared_contracts nao conhece shared_storage
@@ -62,3 +74,6 @@ source_modules =
     core_gateway
 forbidden_modules =
     domain_journal
+    domain_focus
+    domain_draw
+    domain_tools

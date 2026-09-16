@@ -7,6 +7,9 @@ dependencies = [
     "core-gateway",
     "domain-security",
     "domain-journal",
+    "domain-focus",
+    "domain-draw",
+    "domain-tools",
     "shared-contracts",
     "shared-storage",
 ]
@@ -21,6 +24,9 @@ members = ["core_gateway", "domain_*", "shared_*"]
 core-gateway = { workspace = true }
 domain-security = { workspace = true }
 domain-journal = { workspace = true }
+domain-focus = { workspace = true }
+domain-draw = { workspace = true }
+domain-tools = { workspace = true }
 shared-contracts = { workspace = true }
 shared-storage = { workspace = true }
 
@@ -42,6 +48,10 @@ src = [
     "core_gateway/src",
     "domain_security/src",
     "domain_journal/src",
+    "domain_focus/src",
+    "domain_draw/src",
+    "domain_tools/src",
+
     "shared_contracts/src",
     "shared_storage/src",
 ]
@@ -74,6 +84,9 @@ known-first-party = [
     "core_gateway",
     "domain_security",
     "domain_journal",
+    "domain_focus",
+    "domain_draw",
+    "domain_tools",
     "shared_contracts",
     "shared_storage",
 ]
@@ -93,6 +106,10 @@ mypy_path = [
     "core_gateway/src",
     "domain_security/src",
     "domain_journal/src",
+    "domain_focus/src",
+    "domain_draw/src",
+    "domain_tools/src",
+
     "shared_contracts/src",
     "shared_storage/src",
 ]
@@ -108,6 +125,9 @@ testpaths = [
     "core_gateway",
     "domain_security",
     "domain_journal",
+    "domain_focus",
+    "domain_draw",
+    "domain_tools",
     "shared_contracts",
     "shared_storage",
 ]

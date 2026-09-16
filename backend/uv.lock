@@ -10,8 +10,11 @@ resolution-markers = [
 [manifest]
 members = [
     "core-gateway",
+    "domain-draw",
+    "domain-focus",
     "domain-journal",
     "domain-security",
+    "domain-tools",
     "leadboard-backend",
     "shared-contracts",
     "shared-storage",
@@ -299,6 +302,36 @@ requires-dist = [
 ]
 
 [[package]]
+name = "domain-draw"
+version = "0.1.0"
+source = { editable = "domain_draw" }
+dependencies = [
+    { name = "shared-contracts" },
+    { name = "shared-storage" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "shared-contracts", editable = "shared_contracts" },
+    { name = "shared-storage", editable = "shared_storage" },
+]
+
+[[package]]
+name = "domain-focus"
+version = "0.1.0"
+source = { editable = "domain_focus" }
+dependencies = [
+    { name = "shared-contracts" },
+    { name = "shared-storage" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "shared-contracts", editable = "shared_contracts" },
+    { name = "shared-storage", editable = "shared_storage" },
+]
+
+[[package]]
 name = "domain-journal"
 version = "0.1.0"
 source = { editable = "domain_journal" }
@@ -334,6 +367,21 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "pyjwt", specifier = ">=2.10" },
+    { name = "shared-contracts", editable = "shared_contracts" },
+    { name = "shared-storage", editable = "shared_storage" },
+]
+
+[[package]]
+name = "domain-tools"
+version = "0.1.0"
+source = { editable = "domain_tools" }
+dependencies = [
+    { name = "shared-contracts" },
+    { name = "shared-storage" },
+]
+
+[package.metadata]
+requires-dist = [
     { name = "shared-contracts", editable = "shared_contracts" },
     { name = "shared-storage", editable = "shared_storage" },
 ]
@@ -546,8 +594,11 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "core-gateway" },
+    { name = "domain-draw" },
+    { name = "domain-focus" },
     { name = "domain-journal" },
     { name = "domain-security" },
+    { name = "domain-tools" },
     { name = "shared-contracts" },
     { name = "shared-storage" },
 ]
@@ -565,8 +616,11 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "core-gateway", editable = "core_gateway" },
+    { name = "domain-draw", editable = "domain_draw" },
+    { name = "domain-focus", editable = "domain_focus" },
     { name = "domain-journal", editable = "domain_journal" },
     { name = "domain-security", editable = "domain_security" },
+    { name = "domain-tools", editable = "domain_tools" },
     { name = "shared-contracts", editable = "shared_contracts" },
     { name = "shared-storage", editable = "shared_storage" },
 ]
